@@ -53,6 +53,7 @@ public class SpendingReportProcess {
 		Transaction[] transactions = this.getAllTransactions(criteria);	
 		
 		if(options.contains(OPTION.ProjectedTransactionForMonth.toString())){
+			//merge projected transactions for the rest of the month with all previous transactions
 			criteria = this.composeProjectedTransactionCriteria();
 			Transaction[]  projectedTxns = this.getProjectedTransactions(criteria);			
 			if(projectedTxns != null){				 
@@ -149,24 +150,33 @@ public class SpendingReportProcess {
 			return;
 		}
 		
-		
+		//populate transaction year/month
 		List<Transaction> transactioinList = new ArrayList<Transaction>(Arrays.asList(transactions));	
 		transactioinList.forEach(txn -> this.transformTransactionTime(txn));
+		
+		//Output file name will be the base name "SpendingReport" plus the options supplied		
+		StringBuffer outputFilePath = new StringBuffer("SpendingReport");
+		
+		if(options.contains(OPTION.ProjectedTransactionForMonth.toString())){
+			outputFilePath.append("_CrystalBall");
+		}
 		
 		boolean ignoreCCPayment = options != null && options.contains(OPTION.IgnoreCCPayments.toString()) ? true: false;
 		Transaction[] creditPaymentTxns = null;
 		if(ignoreCCPayment) {
+			outputFilePath.append("_NoCC");
 			creditPaymentTxns = this.getCCPaymentTransactions(transactions);
 			if(creditPaymentTxns != null){				
 				transactioinList.removeAll(Arrays.asList(creditPaymentTxns));
 			}
 		}
-		
+		//get sum of incoming of every month
 		Map<String, Long> incomeMap = transactioinList.stream().filter(t -> t.getAmount() >= 0 && !t.isPending())
 				.collect(Collectors.groupingBy(Transaction::getTransactionYearMonth, Collectors.summingLong(Transaction::getAmount)));			
 		
 		boolean ignoreDonutTxn = options != null && options.contains(OPTION.IgnoreDonut.toString()) ? true: false;
 		
+		//get sum of spending of every month
 		Map<String, Long> spentMap = null;
 		if(!ignoreDonutTxn) {
 			spentMap = transactioinList.stream().filter(t -> !t.isPending() && t.getAmount() < 0)		
@@ -174,20 +184,24 @@ public class SpendingReportProcess {
 		}
 		else {
 			log.debug("Ignoring Donut Transactions...");
+			outputFilePath.append("_NoDonut");
 			spentMap = transactioinList.stream()
 					.filter(t -> !t.isPending() && t.getAmount() < 0 && !Arrays.asList(appProp.getString("transaction.merchant.donut").toLowerCase().split("\\|")).contains(t.getMerchant().toLowerCase()))		
 					.collect(Collectors.groupingBy(Transaction::getTransactionYearMonth, Collectors.summingLong(Transaction::getAmount)));	
 		}
+		
+		//generate final report with spending and income
 		Map<String, SpendingReport> report = this.composeFinalReport(incomeMap, spentMap);
 		
 		ObjectMapper objMapper = new ObjectMapper();
 		objMapper.findAndRegisterModules();
 		
+		//To see report in the log file, need to turn logging level to trace (default debug)
 		log.trace(objMapper.writerWithDefaultPrettyPrinter().writeValueAsString(report));
 		
 		//write a report file--assume report is local to current directory
-		String outputFilePath = "SpendingReport.json";		
-		FileOutputStream out = new FileOutputStream(outputFilePath); 
+		outputFilePath.append(".json");	
+		FileOutputStream out = new FileOutputStream(outputFilePath.toString()); 
 		out.write("######Below are Spending Reports for all transactions######\r\n".getBytes());
 		objMapper.writerWithDefaultPrettyPrinter().writeValue(out, report);
 		
@@ -196,7 +210,7 @@ public class SpendingReportProcess {
 		if(creditPaymentTxns != null && creditPaymentTxns.length > 0){
 			log.trace("######Below are Credit Card Payments Transactions######");
 			log.trace(objMapper.writerWithDefaultPrettyPrinter().writeValueAsString(creditPaymentTxns));
-			out = new FileOutputStream(outputFilePath, true); 
+			out = new FileOutputStream(outputFilePath.toString(), true); 
 			out.write("\r\n######Below are Credit Card Payments Transactions######\r\n".getBytes());			
 			objMapper.writerWithDefaultPrettyPrinter().writeValue(out, creditPaymentTxns);
 			
