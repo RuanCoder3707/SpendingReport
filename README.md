@@ -1,4 +1,4 @@
-
+<pre>
 Description: SpendingReport
 This Java standalone application will invoke an existing Level Money web serivce to generate monthly spending report. 
 Output file will be created under the current director with name like "SpendingReport" + any options + ".json".
@@ -45,3 +45,4 @@ To just run the application, only the lib folder, SpendingReport.jar, and Spendi
 		ii. SpendingReport --cytal-ball --ignore-donuts or 
 		iii. SpendingReport --cytal-ball --ignore-donuts --ignore-cc-payments
 		
+</pre>
