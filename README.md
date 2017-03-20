@@ -41,8 +41,8 @@ To just run the application, only the lib folder, SpendingReport.jar, and Spendi
 		ii. Result: A report file "SpendingReport_NoCC.json" will be created under the current directory.
 	
 	e) Feature b), c), and d) can be combined in any way/order. For example: 
-		i. SpendingReport --ignore-cc-payments --ignore-donuts or 
-		ii. SpendingReport --cytal-ball --ignore-donuts or 
+		i. SpendingReport --ignore-cc-payments --ignore-donuts
+		ii. SpendingReport --cytal-ball --ignore-donuts
 		iii. SpendingReport --cytal-ball --ignore-donuts --ignore-cc-payments
 		
 </pre>
