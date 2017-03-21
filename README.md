@@ -6,7 +6,7 @@ A log file "SpendingReport.log" will be created with more debuging information.
 To see the report in the log too, log4j's logging level needs to be changed to 'trace'. 
 
 System Requirements:
-1. JDK version: 1.8
+1. Oracle JDK version: 1.8
 2. OS: Windows
 3. Environment Path: make sure JDK 1.8 is on your environment Path.
 
@@ -44,5 +44,6 @@ To run the application, only the lib folder, SpendingReport.jar, and SpendingRep
 		i. SpendingReport --ignore-cc-payments --ignore-donuts
 		ii. SpendingReport --crystal-ball --ignore-donuts
 		iii. SpendingReport --crystal-ball --ignore-donuts --ignore-cc-payments
-		
+Note: if you are receiving secret key related error when running the program, it is because your local JRE does not use unlimited JCE policy files. Please copy the two policy files, local_policy.jar and US_export_policy.jar, in the JCE folder and replace your local's JRE's policy files. Your local JCE policy files are located at %JAVA_HOME%\jre\lib\security where "%JAVA_HOME%" is your jdk installation location such as C:\Program Files\Java\jdk1.8.0_91.
+
 </pre>
