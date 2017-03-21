@@ -44,6 +44,9 @@ To run the application, only the lib folder, SpendingReport.jar, and SpendingRep
 		i. SpendingReport --ignore-cc-payments --ignore-donuts
 		ii. SpendingReport --crystal-ball --ignore-donuts
 		iii. SpendingReport --crystal-ball --ignore-donuts --ignore-cc-payments
-Note: if you are receiving secret key related error when running the program, it is because your local JRE does not use unlimited JCE policy files. Please copy the two policy files, local_policy.jar and US_export_policy.jar, in the JCE folder and replace your local's JRE's policy files. Your local JCE policy files are located at %JAVA_HOME%\jre\lib\security where "%JAVA_HOME%" is your jdk installation location such as C:\Program Files\Java\jdk1.8.0_91.
+Note: if you are receiving secret key related error when running the program, it is because your local JRE does not use unlimited JCE policy files. 
+Please copy the two policy files, local_policy.jar and US_export_policy.jar, in the JCE folder and replace your local's JRE's policy files. 
+Your local JCE policy files are located at %JAVA_HOME%\jre\lib\security. 
+"%JAVA_HOME%" is your jdk installation location such as C:\Program Files\Java\jdk1.8.0_91.
 
 </pre>
